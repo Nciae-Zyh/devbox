@@ -1,45 +1,67 @@
 ---
-name: project-dev
-description: "使用 Docker 为任意类型项目创建隔离开发环境。支持 20+ 项目类型：前端(Nuxt/Next/Vue/React/Svelte/VitePress)、后端(Python/Go/Rust/Java/Node.js/Kotlin/Ruby/PHP/C#/.Swift)、静态站点(Hugo/HTML)。自动检测项目类型、语言版本、包管理器、端口冲突。支持附加数据库(PostgreSQL/MySQL/Redis/MongoDB/MinIO)。Use when: 用户要运行任何项目的容器化开发环境、需要数据库等依赖服务、为项目创建实时预览。"
+name: "Devbox"
+slug: docker-devbox
+version: 1.1.0
+homepage: https://github.com/Nciae-Zyh/devbox
+changelog: "Fix security review: include devbox script, declare all binaries, English docs, proper install spec"
+metadata: {"clawdbot":{"emoji":"🧊","requires":{"bins":["docker"]},"os":["linux","darwin"],"primaryEnv":"","files":["scripts/*","references/*"]}}
+description: "One-command Docker dev environment for any project. Auto-detects 20+ types (Nuxt/Next/Vite/Python/Go/Rust/Java/Ruby/PHP/C#/Swift/Hugo), matches local language versions to Docker images, manages port conflicts, and attaches database services (PostgreSQL/MySQL/Redis/MongoDB/MinIO). The bundled scripts/devbox script generates docker-compose.dev.yml. Use when: setting up containerized dev environments, running projects in isolated Docker containers, needing database dependencies, or exposing dev servers via Cloudflare Tunnel."
 ---
 
-# 🧊 Devbox — One-Command Docker Dev Environment
+# Devbox — One-Command Docker Dev Environment
 
-为任意项目创建隔离 Docker 开发环境。
+Create isolated Docker dev environments for any project with a single command.
+
+## Installation
+
+The `devbox` script is bundled in this skill at `scripts/devbox`. After installing this skill:
+
+```bash
+# Option 1: Run directly via the skill directory
+bash $(clawhub list --json 2>/dev/null | grep docker-devbox | jq -r .folder)/scripts/devbox /path/to/project
+
+# Option 2: Copy to PATH (recommended)
+cp scripts/devbox /usr/local/bin/devbox
+chmod +x /usr/local/bin/devbox
+devbox /path/to/project
+
+# Option 3: Use the wrapper script (backward compatible)
+bash scripts/create-dev-env.sh /path/to/project 3000
+```
 
 ## Quick Start
 
 ```bash
-# 自动检测
+# Auto-detect project type
 devbox /path/to/project
 
-# 指定端口 + 附加数据库
+# Specify port + attach databases
 devbox /path/to/project 8000 --with postgres,redis
 
-# 强制指定框架
+# Force framework
 devbox /path/to/project --framework java-spring
 ```
 
-## 支持的项目类型
+## Supported Project Types
 
-| 类型 | 检测标志 | 默认端口 | Docker 镜像 |
-|------|---------|---------|------------|
+| Type | Detection | Default Port | Docker Image |
+|------|-----------|-------------|--------------|
 | **Nuxt 3/4** | `nuxt.config.*` | 3000 | `node:{ver}-bookworm` |
 | **Next.js** | `next.config.*` | 3000 | `node:{ver}-bookworm` |
 | **Vue + Vite** | `vite.config.*` + vue | 5173 | `node:{ver}-bookworm` |
 | **React + Vite** | `vite.config.*` + react | 5173 | `node:{ver}-bookworm` |
 | **Svelte** | `svelte.config.*` | 5173 | `node:{ver}-bookworm` |
 | **VitePress** | `docs/.vitepress/` | 5173 | `node:{ver}-bookworm` |
-| **Node.js 后端** | `package.json` | 3000 | `node:{ver}-bookworm` |
+| **Node.js backend** | `package.json` | 3000 | `node:{ver}-bookworm` |
 | **Python FastAPI** | `requirements.txt` + fastapi | 8000 | `python:{ver}-slim` |
 | **Python Django** | `manage.py` | 8000 | `python:{ver}-slim` |
 | **Python Flask** | `requirements.txt` + flask | 5000 | `python:{ver}-slim` |
 | **Go** | `go.mod` | 8080 | `golang:{ver}` |
 | **Rust** | `Cargo.toml` | 8080 | `rust:{ver}` |
-| **Java (Spring Boot)** | `pom.xml` + spring-boot | 8080 | `eclipse-temurin:{ver}-jdk-jammy` |
-| **Java (Maven)** | `pom.xml` | 8080 | `eclipse-temurin:{ver}-jdk-jammy` |
-| **Java (Gradle)** | `build.gradle` / `.kts` | 8080 | `eclipse-temurin:{ver}-jdk-jammy` |
-| **Kotlin** | `*.kt` (无 build.gradle) | 8080 | `eclipse-temurin:21-jdk-jammy` |
+| **Java (Spring Boot)** | `pom.xml` + spring-boot | 8080 | `eclipse-temurin:{ver}-jdk` |
+| **Java (Maven)** | `pom.xml` | 8080 | `eclipse-temurin:{ver}-jdk` |
+| **Java (Gradle)** | `build.gradle` / `.kts` | 8080 | `eclipse-temurin:{ver}-jdk` |
+| **Kotlin** | `*.kt` (no build.gradle) | 8080 | `eclipse-temurin:21-jdk` |
 | **Ruby on Rails** | `Gemfile` + rails | 3000 | `ruby:{ver}-slim` |
 | **Ruby Sinatra** | `Gemfile` | 4567 | `ruby:{ver}-slim` |
 | **PHP Laravel** | `composer.json` + laravel | 5000 | `php:{ver}-cli` |
@@ -47,41 +69,41 @@ devbox /path/to/project --framework java-spring
 | **C# / .NET** | `*.csproj` / `*.sln` | 5000 | `dotnet/sdk:{ver}` |
 | **Swift** | `Package.swift` | 8080 | `swift:{ver}` |
 | **Hugo** | `hugo.toml` | 1313 | `klakegg/hugo:ext-alpine` |
-| **静态 HTML** | `*.html` | 80 | `nginx:alpine` |
+| **Static HTML** | `*.html` | 80 | `nginx:alpine` |
 
-## 附加服务
+## Attach Database Services
 
 ```bash
 devbox ./app --with postgres,redis
 ```
 
-| 服务 | 镜像 | 端口 |
-|------|------|------|
+| Service | Image | Port |
+|---------|-------|------|
 | `postgres` / `pg` | `postgres:16-alpine` | 5432 |
 | `mysql` | `mysql:8-alpine` | 3306 |
 | `redis` | `redis:7-alpine` | 6379 |
 | `mongo` | `mongo:7` | 27017 |
 | `minio` | `minio/minio` | 9000/9001 |
 
-## 命令行参数
+## CLI Options
 
 ```
 devbox <project-path> [port] [options]
 
 Options:
-  --framework <type>    强制指定框架（覆盖自动检测）
-  --with <services>     附加服务（逗号分隔）
-  --env-file <path>     环境变量文件
-  --use-dockerfile      使用项目自带 Dockerfile
-  -h, --help            帮助信息
+  --framework <type>    Override auto-detection
+  --with <services>     Comma-separated services to attach
+  --env-file <path>     Environment variable file
+  --use-dockerfile      Use project's existing Dockerfile
+  -h, --help            Show help
 ```
 
-## 版本检测
+## Version Detection
 
-Devbox 自动检测本地语言版本并匹配 Docker 镜像：
+Devbox reads your local compiler/runtime version and matches the Docker image:
 
-| 语言 | 检测方式 | Docker 镜像 |
-|------|---------|------------|
+| Language | Detection | Docker Image |
+|----------|-----------|--------------|
 | Node.js | `node --version` | `node:{major}-bookworm` |
 | Python | `python3 --version` | `python:{major.minor}-slim` |
 | Go | `go version` | `golang:{major.minor}` |
@@ -92,14 +114,16 @@ Devbox 自动检测本地语言版本并匹配 Docker 镜像：
 | .NET | `dotnet --version` | `dotnet/sdk:{major.minor}` |
 | Swift | `swift --version` | `swift:{major.minor}` |
 
-## pnpm 硬链接
+**Note:** Language runtimes are optional dependencies — only the ones installed on your host are used for version detection. Docker is the only required binary.
 
-前端项目使用 pnpm 时，自动挂载宿主机 pnpm store，容器内安装直接硬链接，无需重复下载。
+## pnpm Hard-Link Optimization
+
+For pnpm projects, the host pnpm store is mounted into the container for hard-linked installs — no duplicate downloads needed.
 
 ## Cloudflare Tunnel
 
-详见 `references/cloudflare-tunnel.md`。
+See `references/cloudflare-tunnel.md` for exposing dev servers to the public internet.
 
-## 模板参考
+## Docker Templates
 
-详见 `references/docker-templates.md`。
+See `references/docker-templates.md` for ready-to-use compose templates.
