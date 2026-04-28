@@ -123,6 +123,9 @@ Options:
 - `swift` — Swift version matching
 - `pnpm` / `yarn` / `bun` — Node.js package manager detection
 
+**Optional (for port conflict detection):**
+- `lsof` — Detects host processes using a port (falls back to Docker-only check if missing)
+
 Only the runtimes installed on your host are used. If a language is not installed, the script falls back to a sensible default version.
 
 ## Included Files

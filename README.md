@@ -65,6 +65,8 @@ docker compose -f docker-compose.dev.yml up -d
 
 **Optional** (for version detection): `node`, `python3`, `go`, `rustc`, `java`, `ruby`, `php`, `dotnet`, `swift`, `pnpm`/`yarn`/`bun`
 
+**Optional** (for port conflict detection): `lsof`
+
 ## Attach Services
 
 ```bash
