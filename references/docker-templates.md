@@ -10,7 +10,7 @@ services:
     image: node:24-bookworm
     working_dir: /app
     volumes:
-      - /WorkSpace/my-nuxt-app:/app
+      - /path/to/your/project:/app
       - my-nuxt-nm:/app/node_modules
       - ~/.local/share/pnpm/store/v3:/root/.local/share/pnpm/store/v3
     ports:
@@ -35,7 +35,7 @@ services:
     image: node:24-bookworm
     working_dir: /app
     volumes:
-      - /WorkSpace/my-next-app:/app
+      - /path/to/your/project:/app
       - my-next-nm:/app/node_modules
       - my-next-next:/app/.next
     ports:
@@ -60,7 +60,7 @@ services:
     image: node:24-bookworm
     working_dir: /app
     volumes:
-      - /WorkSpace/my-app:/app
+      - /path/to/your/project:/app
       - my-app-nm:/app/node_modules
     ports:
       - "5173:5173"
@@ -86,7 +86,7 @@ services:
     image: python:3.12-slim
     working_dir: /app
     volumes:
-      - /WorkSpace/my-api:/app
+      - /path/to/your/project:/app
     ports:
       - "8000:8000"
     command: >
@@ -103,7 +103,7 @@ services:
     image: python:3.12-slim
     working_dir: /app
     volumes:
-      - /WorkSpace/my-django:/app
+      - /path/to/your/project:/app
     ports:
       - "8000:8000"
     command: >
@@ -120,7 +120,7 @@ services:
     image: golang:1.22
     working_dir: /app
     volumes:
-      - /WorkSpace/my-go-app:/app
+      - /path/to/your/project:/app
       - my-go-mod:/go/pkg/mod
       - my-go-cache:/root/.cache/go-build
     ports:
@@ -142,7 +142,7 @@ services:
     image: rust:1.77
     working_dir: /app
     volumes:
-      - /WorkSpace/my-rust-app:/app
+      - /path/to/your/project:/app
       - my-rust-cargo-registry:/usr/local/cargo/registry
       - my-rust-cargo-git:/usr/local/cargo/git
     ports:
@@ -166,7 +166,7 @@ services:
     image: klakegg/hugo:ext-alpine
     working_dir: /src
     volumes:
-      - /WorkSpace/my-hugo-site:/src
+      - /path/to/your/project:/src
     ports:
       - "1313:1313"
     command: server --bind 0.0.0.0 --port 1313
@@ -181,7 +181,7 @@ services:
     image: node:24-bookworm
     working_dir: /app
     volumes:
-      - /WorkSpace/my-docs:/app
+      - /path/to/your/project:/app
       - my-docs-nm:/app/node_modules
     ports:
       - "5173:5173"
@@ -202,7 +202,7 @@ services:
   my-static:
     image: nginx:alpine
     volumes:
-      - /WorkSpace/my-site:/usr/share/nginx/html:ro
+      - /path/to/your/project:/usr/share/nginx/html:ro
     ports:
       - "8080:80"
     restart: unless-stopped
@@ -218,7 +218,7 @@ services:
     image: node:24-bookworm
     working_dir: /app
     volumes:
-      - /WorkSpace/my-app:/app
+      - /path/to/your/project:/app
       - my-app-nm:/app/node_modules
     ports:
       - "3000:3000"
@@ -268,7 +268,7 @@ services:
     image: python:3.12-slim
     working_dir: /app
     volumes:
-      - /WorkSpace/my-app:/app
+      - /path/to/your/project:/app
     ports:
       - "8000:8000"
     depends_on:
@@ -331,7 +331,7 @@ services:
     image: node:24-bookworm
     working_dir: /app
     volumes:
-      - /WorkSpace/project-a:/app
+      - /path/to/project-a:/app
       - project-a-nm:/app/node_modules
     ports:
       - "3001:3001"
@@ -342,7 +342,7 @@ services:
     image: python:3.12-slim
     working_dir: /app
     volumes:
-      - /WorkSpace/project-b:/app
+      - /path/to/project-b:/app
     ports:
       - "8000:8000"
     command: sh -c "pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"

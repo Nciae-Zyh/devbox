@@ -4,17 +4,17 @@
 
 ## Features
 
-- 🔍 **Smart Detection** — Recognizes 20+ project types (Nuxt / Next / Vue / React / Python / Go / Rust / Java / Ruby / PHP / C# / Swift / Hugo…)
-- 📦 **Version Matching** — Reads local Node / Python / Go / Rust / Java / Ruby / PHP / .NET / Swift versions and matches Docker images
-- 🔗 **pnpm Hard-Links** — Mounts host pnpm store into containers for instant installs
+- 🔍 **Smart Detection** — Recognizes 20+ project types
+- 📦 **Version Matching** — Reads local runtime versions, matches Docker images
+- 🔗 **pnpm Hard-Links** — Mounts host pnpm store for instant installs
 - 🚀 **Port Management** — Auto-detects conflicts and assigns free ports
-- 🗄️ **Database Support** — Attach PostgreSQL / MySQL / Redis / MongoDB / MinIO with one flag
+- 🗄️ **Database Support** — Attach PostgreSQL / MySQL / Redis / MongoDB / MinIO
 
 ## Quick Start
 
 ```bash
 # Install
-cp scripts/devbox /usr/local/bin/devbox
+cp scripts/devbox.sh /usr/local/bin/devbox
 chmod +x /usr/local/bin/devbox
 
 # Auto-detect and run
@@ -59,21 +59,11 @@ docker compose -f docker-compose.dev.yml up -d
 | Hugo | `hugo.toml` | 1313 | `klakegg/hugo:ext-alpine` |
 | Static HTML | `*.html` | 80 | `nginx:alpine` |
 
-## Version Auto-Detection
+## Dependencies
 
-| Language | Detection | Docker Image |
-|----------|-----------|--------------|
-| Node.js | `node --version` | `node:22-bookworm` |
-| Python | `python3 --version` | `python:3.12-slim` |
-| Go | `go version` | `golang:1.22` |
-| Rust | `rustc --version` | `rust:1.77` |
-| Java | `java -version` | `eclipse-temurin:21-jdk-jammy` |
-| Ruby | `ruby --version` | `ruby:3.3-slim` |
-| PHP | `php --version` | `php:8.3-cli` |
-| .NET | `dotnet --version` | `dotnet/sdk:8.0` |
-| Swift | `swift --version` | `swift:5.10` |
+**Required:** `docker` + `docker compose`
 
-Language runtimes are **optional** — only installed ones are used. Docker is the only hard requirement.
+**Optional** (for version detection): `node`, `python3`, `go`, `rustc`, `java`, `ruby`, `php`, `dotnet`, `swift`, `pnpm`/`yarn`/`bun`
 
 ## Attach Services
 

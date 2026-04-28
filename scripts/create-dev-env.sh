@@ -20,4 +20,4 @@ ARGS=("$PROJECT_PATH")
 [ -n "$PORT" ] && ARGS+=("$PORT")
 [ -n "$FRAMEWORK" ] && ARGS+=("--framework" "$FRAMEWORK")
 
-exec "$SCRIPT_DIR/devbox" "${ARGS[@]}"
+exec "$SCRIPT_DIR/devbox.sh" "${ARGS[@]}"

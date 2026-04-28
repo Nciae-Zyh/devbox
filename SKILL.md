@@ -1,32 +1,40 @@
 ---
 name: "Devbox"
 slug: docker-devbox
-version: 1.1.0
+version: 1.2.0
 homepage: https://github.com/Nciae-Zyh/devbox
-changelog: "Fix security review: include devbox script, declare all binaries, English docs, proper install spec"
-metadata: {"clawdbot":{"emoji":"🧊","requires":{"bins":["docker"]},"os":["linux","darwin"],"primaryEnv":"","files":["scripts/*","references/*"]}}
-description: "One-command Docker dev environment for any project. Auto-detects 20+ types (Nuxt/Next/Vite/Python/Go/Rust/Java/Ruby/PHP/C#/Swift/Hugo), matches local language versions to Docker images, manages port conflicts, and attaches database services (PostgreSQL/MySQL/Redis/MongoDB/MinIO). The bundled scripts/devbox script generates docker-compose.dev.yml. Use when: setting up containerized dev environments, running projects in isolated Docker containers, needing database dependencies, or exposing dev servers via Cloudflare Tunnel."
+changelog: "Fix packaging: include devbox.sh script, remove tunnel references, declare all binaries"
+metadata: {"clawdbot":{"emoji":"🧊","requires":{"bins":["docker"]},"os":["linux","darwin"],"files":["scripts/*","references/*"]}}
+description: "One-command Docker dev environment for any project. Auto-detects 20+ types (Nuxt/Next/Vite/Python/Go/Rust/Java/Ruby/PHP/C#/Swift/Hugo), matches local language versions to Docker images, manages port conflicts, and attaches database services (PostgreSQL/MySQL/Redis/MongoDB/MinIO). The bundled scripts/devbox.sh script generates docker-compose.dev.yml. Use when: setting up containerized dev environments, running projects in isolated Docker containers, or needing database dependencies."
 ---
 
 # Devbox — One-Command Docker Dev Environment
 
 Create isolated Docker dev environments for any project with a single command.
 
-## Installation
+## How It Works
 
-The `devbox` script is bundled in this skill at `scripts/devbox`. After installing this skill:
+The `scripts/devbox.sh` script is bundled with this skill. It:
+1. Auto-detects your project type (framework, language, package manager)
+2. Reads your local language version (Node, Python, Go, Rust, Java, etc.)
+3. Generates a `docker-compose.dev.yml` with the matching Docker image
+4. Optionally attaches database services (PostgreSQL, MySQL, Redis, MongoDB, MinIO)
+
+## Usage
+
+After installing this skill, run the bundled script directly:
 
 ```bash
-# Option 1: Run directly via the skill directory
-bash $(clawhub list --json 2>/dev/null | grep docker-devbox | jq -r .folder)/scripts/devbox /path/to/project
+# Find where the skill is installed
+SKILL_DIR=$(clawhub list --json 2>/dev/null | python3 -c "import sys,json; print([s['folder'] for s in json.load(sys.stdin) if s.get('slug')=='docker-devbox'][0])" 2>/dev/null || echo "skills/docker-devbox")
 
-# Option 2: Copy to PATH (recommended)
-cp scripts/devbox /usr/local/bin/devbox
+# Run devbox
+bash "$SKILL_DIR/scripts/devbox.sh" /path/to/project
+
+# Or copy to PATH for convenience
+cp "$SKILL_DIR/scripts/devbox.sh" /usr/local/bin/devbox
 chmod +x /usr/local/bin/devbox
 devbox /path/to/project
-
-# Option 3: Use the wrapper script (backward compatible)
-bash scripts/create-dev-env.sh /path/to/project 3000
 ```
 
 ## Quick Start
@@ -98,32 +106,33 @@ Options:
   -h, --help            Show help
 ```
 
-## Version Detection
+## Dependencies
 
-Devbox reads your local compiler/runtime version and matches the Docker image:
+**Required:**
+- `docker` + `docker compose` — the only hard requirement
 
-| Language | Detection | Docker Image |
-|----------|-----------|--------------|
-| Node.js | `node --version` | `node:{major}-bookworm` |
-| Python | `python3 --version` | `python:{major.minor}-slim` |
-| Go | `go version` | `golang:{major.minor}` |
-| Rust | `rustc --version` | `rust:{major.minor}` |
-| Java | `java -version` | `eclipse-temurin:{major}-jdk-jammy` |
-| Ruby | `ruby --version` | `ruby:{major.minor}-slim` |
-| PHP | `php --version` | `php:{major.minor}-cli` |
-| .NET | `dotnet --version` | `dotnet/sdk:{major.minor}` |
-| Swift | `swift --version` | `swift:{major.minor}` |
+**Optional (for version detection):**
+- `node` — Node.js version matching
+- `python3` — Python version matching
+- `go` — Go version matching
+- `rustc` — Rust version matching
+- `java` — Java version matching
+- `ruby` — Ruby version matching
+- `php` — PHP version matching
+- `dotnet` — .NET version matching
+- `swift` — Swift version matching
+- `pnpm` / `yarn` / `bun` — Node.js package manager detection
 
-**Note:** Language runtimes are optional dependencies — only the ones installed on your host are used for version detection. Docker is the only required binary.
+Only the runtimes installed on your host are used. If a language is not installed, the script falls back to a sensible default version.
 
-## pnpm Hard-Link Optimization
+## Included Files
 
-For pnpm projects, the host pnpm store is mounted into the container for hard-linked installs — no duplicate downloads needed.
-
-## Cloudflare Tunnel
-
-See `references/cloudflare-tunnel.md` for exposing dev servers to the public internet.
+```
+scripts/devbox.sh          — Main script (auto-detect + generate compose)
+scripts/create-dev-env.sh  — Backward-compatible wrapper
+references/docker-templates.md — Ready-to-use compose templates
+```
 
 ## Docker Templates
 
-See `references/docker-templates.md` for ready-to-use compose templates.
+See `references/docker-templates.md` for ready-to-use compose templates for each project type.
